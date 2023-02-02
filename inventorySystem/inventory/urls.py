@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import inventory_list, per_product_view, add_product, delete_product, update_product
+from .views import registration, inventory_list, per_product_view, add_product, delete_product, update_product
 
 
 urlpatterns = [

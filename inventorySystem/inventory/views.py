@@ -1,7 +1,20 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Inventory
-from .forms import AddProductsForm, UpdateProductForm
+from .forms import AddProductsForm, UpdateProductForm, RegisterForm
+
+
+def registration(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.set_password(user.password)
+            user.save()
+            return redirect('login')
+    else:
+        form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
 
 
 @login_required
@@ -56,6 +69,7 @@ def update_product(request, pk):
             inventory.name = updateForm.data['name']
             inventory.model = updateForm.data['model']
             inventory.quantity = updateForm.data['quantity']
+            inventory.cost_per_piece = float(updateForm.data['cost_per_piece'])
             inventory.price = float(updateForm.data['price']) * float(inventory.quantity)
             inventory.save()
             return redirect(f"/inventory/product/{pk}")
