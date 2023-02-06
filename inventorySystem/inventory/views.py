@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from .models import Inventory
 from .forms import AddProductsForm, UpdateProductForm, RegisterForm
 
@@ -79,3 +82,11 @@ def update_product(request, pk):
         "form": updateForm
     }
     return render(request, "inventory/update_product.html", context=context)
+
+
+@login_required
+def user_permissions(request, pk):
+    user = User.objects.get(pk=pk)
+    content_type = ContentType.objects.get(app_label='inventory', model='Inventory')
+    permission = Permission.objects.get(codename='inventory', content_type=content_type)
+    user.user_permissions.add(permission)
